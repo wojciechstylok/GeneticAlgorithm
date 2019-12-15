@@ -8,6 +8,8 @@ namespace GeneticAlgorithm
     {
         public static int arrayLength;
         public static int[,] distanceTable;
+
+        private static int numberOfIndividualsInPopulation = 10;
         static void Main(string[] args)
         {
             var fileName = "berlin52.txt";
@@ -38,10 +40,16 @@ namespace GeneticAlgorithm
             sr.Close();
 
             // Creating population of n individuals
-            int numberOfIndividualsInPopulation = 8;
             Population p1 = new Population(numberOfIndividualsInPopulation);
             // Showing population
             p1.ShowPopulation();
+
+            int tournamentSelectionParamether = 3;
+
+            Console.WriteLine("---------------------------------------------------------------------------");
+
+            TournamentSelection(p1, tournamentSelectionParamether).ShowPopulation();
+
 
             // Test individual
             //Individual i1 = new Individual();
@@ -56,6 +64,28 @@ namespace GeneticAlgorithm
                 }
                 Console.WriteLine();
             }*/
+        }
+        private static Population TournamentSelection(Population inputPopulation, int k)
+        {
+            Random rnd = new Random();
+            Population outputPopulation = new Population(numberOfIndividualsInPopulation);
+
+            for (int i = 0; i < inputPopulation.population.Length; i++)
+            {
+                int randomIndex = rnd.Next(0, inputPopulation.population.Length - 1);
+                int index = randomIndex;
+                for (int j = 0; j < k; j++)
+                {
+                    randomIndex = rnd.Next(0, inputPopulation.population.Length - 1);
+                    if (inputPopulation.population[randomIndex].rate > inputPopulation.population[index].rate)
+                    {
+                        index = randomIndex;
+                    }
+                }
+                outputPopulation.population[i] = inputPopulation.population[index];
+            }
+
+            return outputPopulation;
         }
     }
 }
