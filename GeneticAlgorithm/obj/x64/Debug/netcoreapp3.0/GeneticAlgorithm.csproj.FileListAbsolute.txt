@@ -1,0 +1,11 @@
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\obj\x64\Debug\netcoreapp3.0\GeneticAlgorithm.csprojAssemblyReference.cache
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\obj\x64\Debug\netcoreapp3.0\GeneticAlgorithm.AssemblyInfoInputs.cache
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\obj\x64\Debug\netcoreapp3.0\GeneticAlgorithm.AssemblyInfo.cs
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\bin\x64\Debug\netcoreapp3.0\GeneticAlgorithm.exe
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\bin\x64\Debug\netcoreapp3.0\GeneticAlgorithm.deps.json
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\bin\x64\Debug\netcoreapp3.0\GeneticAlgorithm.runtimeconfig.json
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\bin\x64\Debug\netcoreapp3.0\GeneticAlgorithm.runtimeconfig.dev.json
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\bin\x64\Debug\netcoreapp3.0\GeneticAlgorithm.dll
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\bin\x64\Debug\netcoreapp3.0\GeneticAlgorithm.pdb
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\obj\x64\Debug\netcoreapp3.0\GeneticAlgorithm.dll
+C:\Users\Wojciech\source\repos\GeneticAlgorithm\GeneticAlgorithm\obj\x64\Debug\netcoreapp3.0\GeneticAlgorithm.pdb

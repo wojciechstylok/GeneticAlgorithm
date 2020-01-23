@@ -8,7 +8,7 @@ namespace GeneticAlgorithm
     {
         public int[] individual;
         public int rate;
-        private readonly int arrayLength = Program.arrayLength;
+        private readonly int arrayLength = Program.individualLength;
         public Individual()
         {
             this.individual = new int[arrayLength];
@@ -40,7 +40,7 @@ namespace GeneticAlgorithm
             Console.WriteLine("Rate: " + this.rate);
         }
 
-        private int SetRate()
+        public int SetRate()
         {
             int sum = 0;
             for(int i = 0; i < this.individual.Length; i++)
