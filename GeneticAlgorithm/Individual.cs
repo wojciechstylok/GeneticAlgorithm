@@ -12,21 +12,23 @@ namespace GeneticAlgorithm
         public Individual()
         {
             this.individual = new int[arrayLength];
-            foreach (int i in individual)
+            for(int i = 0; i < arrayLength; i++)
+            {
                 individual[i] = -1;
+            }                
 
             Random rnd = new Random();
             int randomValue;
             for (int i = 0; i < arrayLength; i++)
             {
-                randomValue = rnd.Next(0, arrayLength - 1);
+                randomValue = rnd.Next(0, arrayLength);
                 while (Array.IndexOf(this.individual, randomValue) != -1)
                 {
-                    randomValue = rnd.Next(0, arrayLength - 1);
                     if (this.individual[arrayLength - 1] != -1)
                     {
                         break;
                     }
+                    randomValue = rnd.Next(0, arrayLength);
                 }
                 this.individual[i] = randomValue;
             }
@@ -36,8 +38,8 @@ namespace GeneticAlgorithm
         public void ShowIndividual()
         {
             foreach (int i in individual)
-                Console.Write(i + " ");
-            Console.WriteLine("Rate: " + this.rate);
+                Console.Write(i + "-");
+            Console.WriteLine(this.rate);
         }
 
         public int SetRate()
@@ -54,7 +56,16 @@ namespace GeneticAlgorithm
                     sum += Program.distanceTable[individual[0], individual[i]];
                 }
             }
+            this.rate = sum;
             return sum;
+        }
+
+        public void SortIndividual()
+        {
+            Array.Sort(individual);
+            Console.Write("Sorted individual: ");
+            foreach (int i in individual)
+                Console.Write(i + " ");
         }
     }
 }

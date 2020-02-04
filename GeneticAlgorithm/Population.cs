@@ -7,6 +7,9 @@ namespace GeneticAlgorithm
     class Population
     {
         public Individual[] population;
+        public Individual bestIndividual;
+
+        public Population() { }
         public Population(int numberOfIndividuals)
         {
             Individual[] pop = new Individual[numberOfIndividuals];
@@ -24,6 +27,19 @@ namespace GeneticAlgorithm
                 i.ShowIndividual();
                 Console.WriteLine();
             }
+        }
+
+        public void SearchForTheBestIndividual()
+        {
+            var currentBest = population[0];
+            foreach (Individual i in population)
+            {
+                if (i.rate < currentBest.rate)
+                {
+                    currentBest = i;
+                }
+            }
+            bestIndividual = currentBest;
         }
     }
 }

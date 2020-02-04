@@ -11,14 +11,16 @@ namespace GeneticAlgorithm
         public static int[,] distanceTable;
 
         private static Random rand = new Random();
-        private static Random rando = new Random();
+        private static Random random = new Random();
         private static Random rnd = new Random();
-        private static int numberOfIndividualsInPopulation = 30;
+        private static int numberOfIndividualsInPopulation = 70;
         private static int k = 3;
         private static int pk = 7500; // 100% = 10 000
+        private static int pm = 100; // 100% = 10 000
+        private static int iterations = 15000000;
         static void Main(string[] args)
         {
-            var fileName = "berlin52.txt";
+            var fileName = "bays29.txt";
             var path = @"C:\Users\Wojciech\Desktop\" + fileName;
             StreamReader sr = new StreamReader(path);
 
@@ -39,44 +41,50 @@ namespace GeneticAlgorithm
                     distanceTable[lineCounter, i] = int.Parse(singleLine[i]);
                     distanceTable[i, lineCounter] = int.Parse(singleLine[i]);
                 }
-                //System.Console.WriteLine(line);
                 lineCounter++;
             }
 
             sr.Close();
 
-            // Creating population of n individuals
-            Population p1 = new Population(numberOfIndividualsInPopulation);
-            // Showing population
-            p1.ShowPopulation();
-
-            Console.WriteLine("---------------------------------------------------------------------------");
-
-            Population p2 = new Population(numberOfIndividualsInPopulation);
-            p2 = TournamentSelection(p1);
-            p2.ShowPopulation();
-
-            Console.WriteLine("---------------------------------------------------------------------------");
-
+            Population p1 = new Population();
+            Population p2 = new Population();
             Population p3 = new Population(numberOfIndividualsInPopulation);
-            p2.population.CopyTo(p3.population, 0);
-            p3 = PmxCrossing(p3);
-            //p3.ShowPopulation();
+            Individual bestIndividual = new Individual();
 
-
-            // Test individual
-            //Individual i1 = new Individual();
-            //i1.ShowIndividual();
-
-            // Display distance table
-            /*for (int i = 0; i<distanceTable.GetLength(0); i++)
+            #region Główna pętla
+            p1 = new Population(numberOfIndividualsInPopulation);
+            for (int i = 0; i < iterations; i++)
             {
-                for(int j = 0; j < distanceTable.GetLength(1); j++)
+                
+                //p1.population[0] = bestIndividual;
+                p2 = TournamentSelection(p1);
+                p2.population.CopyTo(p3.population, 0);
+                p3 = PmxCrossing(p3);
+                p3 = MutationByInversion(p3);
+                p3.SearchForTheBestIndividual();
+
+                if (p3.bestIndividual.rate < bestIndividual.rate)
                 {
-                    Console.Write(distanceTable[i, j] + " ");
+                    bestIndividual = p3.bestIndividual;
                 }
-                Console.WriteLine();
-            }*/
+
+                if (i % 5000 == 0)
+                {
+                    bestIndividual.ShowIndividual();
+                    pm += 50;
+                }
+                if (i % 500000 == 0)
+                {
+                    Console.WriteLine($"{DateTime.Now} iteracja: {i}");
+                }
+            }
+
+            Console.WriteLine("---WINNER---");
+            bestIndividual.ShowIndividual();
+
+            p3.population.CopyTo(p1.population, 0);
+
+            #endregion // Główna pętla
         }
         private static Population TournamentSelection(Population inputPopulation)
         {
@@ -84,17 +92,16 @@ namespace GeneticAlgorithm
 
             for (int i = 0; i < inputPopulation.population.Length; i++)
             {
-                int randomIndex = rnd.Next(0, inputPopulation.population.Length - 1);
+                int randomIndex = rnd.Next(0, inputPopulation.population.Length); // otwarte z prawej strony
                 int index = randomIndex;
                 for (int j = 0; j < k; j++)
                 {
-                    randomIndex = rnd.Next(0, inputPopulation.population.Length - 1);
+                    randomIndex = rnd.Next(0, inputPopulation.population.Length);
                     if (inputPopulation.population[randomIndex].rate > inputPopulation.population[index].rate)
                     {
                         index = randomIndex;
                     }
                 }
-                //outputPopulation.population[i] = inputPopulation.population[index];
                 inputPopulation.population[index].individual.CopyTo(outputPopulation.population[i].individual, 0);
                 outputPopulation.population[i].rate = inputPopulation.population[index].rate;
             }
@@ -104,24 +111,20 @@ namespace GeneticAlgorithm
 
         private static Population PmxCrossing(Population inputPopulation)
         {
-            Population outputPopulation = new Population(numberOfIndividualsInPopulation);
+            Population outputPopulation = inputPopulation;
             for (int i = 0; i < outputPopulation.population.Length - 2; i += 2)
             {
                 if (i % 2 == 0)
                 {
-                    if (rando.Next(0, 9999) < pk)
+                    if (random.Next(0, 9999) < pk)
                     {
-                        int ppp = rand.Next(0, individualLength);
+                        int ppp = rand.Next(0, individualLength - 2);
                         int dpp = rand.Next(ppp + 1, individualLength);
 
-                        Console.WriteLine("ppp: " + ppp + " dpp: " + dpp + " " + individualLength);
+                        //Console.WriteLine("ppp: " + ppp + " dpp: " + dpp + " " + individualLength);
 
                         Individual child1 = inputPopulation.population[i];
                         Individual child2 = inputPopulation.population[i + 1];
-
-                        Console.WriteLine("---POCZĄTEK-------------------------------------------------------------------");
-                        child1.ShowIndividual();
-                        child2.ShowIndividual();
 
                         #region Podmiana środków
 
@@ -135,8 +138,6 @@ namespace GeneticAlgorithm
                         {
                             if (p >= ppp && p <= dpp)
                             {
-                                var sadda = child2.individual[p];
-                                var asadasdasd = child1.individual[p];
                                 ch1[p] = child2.individual[p];
                                 ch2[p] = child1.individual[p];
                                 ch1swap.Add(ch1[p]);
@@ -149,60 +150,115 @@ namespace GeneticAlgorithm
                             }
                         }
 
-                        #endregion //Podmiana środków   
+                        #endregion //Podmiana środków  
 
-                        //while (areChildrenNotMixed)
-                        //{
-                        //    for (int index = 0; index < ppp; index++)
-                        //    {
-                        //        tmpCh1 = new int[ch1.Length];
-                        //        tmpCh2 = new int[ch2.Length];
+                        #region Wstawianie na początku i końcu
 
-                        //        if (ch2swap.Contains(ch1[index]))
-                        //        {
-                        //            var indexOf1 = Array.IndexOf(ch2, ch1[index]);
-                        //            var indexValue = ch2[indexOf1];
-                        //            ch1[indexOf1] = indexValue;
-                        //        }
-                        //    }
-                        //}
+                        Rewrite(ch1, child1.individual, child2.individual, 0, ppp, ch1swap);
+                        Rewrite(ch1, child1.individual, child2.individual, dpp + 1, ch1.Length, ch1swap);
 
+                        Rewrite(ch2, child2.individual, child1.individual, 0, ppp, ch2swap);
+                        Rewrite(ch2, child2.individual, child1.individual, dpp + 1, ch2.Length, ch2swap);
 
-                        //child1.individual = ch1;
                         ch1.CopyTo(child1.individual, 0);
-                        //child2.individual = ch2;
                         ch2.CopyTo(child2.individual, 0);
 
-                        //outputPopulation.population[i] = child1;
+                        #endregion // Wstawianie na początku i końcuw
+
+                        child1.SetRate();
+                        child2.SetRate();
+
                         child1.individual.CopyTo(outputPopulation.population[i].individual, 0);
-                        //outputPopulation.population[i + 1] = child2;
                         child2.individual.CopyTo(outputPopulation.population[i + 1].individual, 0);
-
-                        //child1.SetRate();
-                        //child2.SetRate();
-
-                        Console.WriteLine("---KONIEC-------------------------------------------------------------------");
-                        child1.ShowIndividual();
-                        child2.ShowIndividual();
                     }
                 }
             }
 
             return outputPopulation;
         }
-        /// <summary>
-        /// Sprawdzanie czy dana liczba może być przepisana
-        /// </summary>
-        /// <param name="child1">Dziecko do wypełnienia</param>
-        /// <param name="child2">Dziecko przed swapem środków</param>
-        /// <param name="searchingNumber">Poszukiwana wartość z child1 do przepisania</param>
-        private void CheckIfContains(int[] child1, int[] child2, int searchingNumber)
+
+        private static void Rewrite(int[] child, int[] parent1, int[] parent2, int start, int koniec, List<int> swap)
         {
-            while (!Array.Exists<int>(child1, x => x == searchingNumber))
+            for (int i = start; i < koniec; i++)
             {
-                var index = Array.IndexOf(child1, searchingNumber);
-                child1[index]
+                int gene = parent1[i];
+                int geneIndex;
+                while (swap.Contains(gene))
+                {
+                    geneIndex = Array.IndexOf(parent1, gene);
+                    gene = parent2[geneIndex];
+                }
+                swap.Add(gene);
+                child[i] = gene;
             }
+        }
+
+        private static Population MutationByInversion(Population inputPopulation)
+        {
+            Population outputPopulation = inputPopulation;
+            for (int i = 0; i < outputPopulation.population.Length; i++)
+            {
+                for (int j = 0; j<outputPopulation.population[i].individual.Length; j++)
+                {
+                    if (random.Next(9998, 9999) < pm)
+                    {
+                        int indZam = rand.Next(0, individualLength - 1);
+                        int tmp = outputPopulation.population[i].individual[j];
+                        outputPopulation.population[i].individual[j]= outputPopulation.population[i].individual[indZam];
+                        outputPopulation.population[i].individual[indZam]=tmp;
+                    }
+                }
+                
+                if (random.Next(0, 9999) < pm)
+                {
+                    int ppp = rand.Next(0, individualLength - 2);
+                    int dpp = rand.Next(ppp + 1, individualLength);
+
+                    Individual child = outputPopulation.population[i];
+
+                    //int[] swap = new int[dpp - ppp + 1];
+                    //int index = 0;
+                    for (int g = ppp, gg = dpp; g<gg; g++, gg--)
+                    {
+                        int tmp = child.individual[g];
+                        child.individual[g] = child.individual[gg];
+                        child.individual[gg] = tmp;
+                    }
+                    //for (int g = ppp; g <= dpp; g++)
+                    //{
+                    //    swap[index] = child.individual[g];
+                    //    index++;
+                    //}
+
+                    //Array.Reverse(swap);
+
+                    //swap.CopyTo(child.individual, ppp);
+                    child.SetRate();
+                }
+                //else
+                //{
+                //    int[] poczatek = new int[ppp - 1];
+                //    int[] koniec = new int[child.individual.Length - dpp - 1];
+                //    int indexPoczatek = 0;
+                //    int indexKoniec = 0;
+                //    for(int x = 0; x < ppp; x++)
+                //    {
+                //        poczatek[indexPoczatek] = child.individual[x - 1];
+                //        indexPoczatek++;
+                //    }
+                //    for (int y = 0; y < ppp; y++)
+                //    {
+                //        koniec[indexKoniec] = child.individual[y];
+                //        indexKoniec++;
+                //    }
+                //    swap.CopyTo(child.individual, 0);
+                //    koniec.CopyTo(child.individual, swap.Length - 1);
+                //    poczatek.CopyTo(child.individual, swap.Length + koniec.Length - 1);
+                //    child.SetRate();
+                //}
+            }
+
+            return outputPopulation;
         }
     }
 }
