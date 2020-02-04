@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs/GeneticAlgorithm
+/GeneticAlgorithm/bin/x64/Release/netcoreapp3.0
+/GeneticAlgorithm/obj/x64/Release/netcoreapp3.0
